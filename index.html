@@ -1,82 +1,344 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Pendaftaran + QR</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Formulir Pendaftaran CARNIVAL BIG SALE SURYATOKOKU VOL.1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial; background:#f8f9fa; padding:20px; display:flex; justify-content:center; }
-    .container { width:100%; max-width:480px; background:#fff; padding:24px; border-radius:12px; box-shadow:0 0 12px rgba(0,0,0,0.1); }
-    input,select,textarea { width:100%; padding:10px; margin-top:6px; border-radius:6px; border:1px solid #ccc; }
-    button { width:100%; padding:12px; margin-top:20px; background:#1a73e8; color:#fff; border:none; border-radius:6px; cursor:pointer; }
-    #result { display:none; margin-top:25px; text-align:center; }
+    :root{
+      --bg1:#FFEEE1; --bg2:#FFF6D9; --accent:#FF6B6B; --accent2:#FFD93D; --card:#ffffff;
+      --glass: rgba(255,255,255,0.6);
+      font-family: 'Montserrat', sans-serif;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.5), transparent 5%),
+                  linear-gradient(120deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;padding:32px;
+    }
+    .page{width:100%;max-width:920px}
+    .hero{
+      display:flex;gap:24px;align-items:center;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.6));
+      border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,0.08);position:relative;overflow:hidden
+    }
+    /* carnival decorations */
+    .bunting{position:absolute;left:-40px;top:-40px;width:300px;transform:rotate(-12deg);opacity:0.95}
+    .hero-left{flex:1;min-width:260px}
+    .title{font-size:18px;font-weight:800;letter-spacing:0.02em;margin:0;color:#222}
+    .subtitle{font-size:13px;margin-top:6px;color:#444}
+    .card{flex:2;background:var(--card);border-radius:12px;padding:18px}
+    label{display:block;font-size:12px;margin-bottom:6px;color:#333}
+    input[type=text], input[type=date], input[type=email], input[type=tel], select, textarea{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #eee;background:transparent;margin-bottom:12px;font-size:14px
+    }
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    button{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;padding:12px 16px;border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+    .muted{font-size:12px;color:#666}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal{background:white;border-radius:12px;max-width:720px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,0.2)}
+    .modal h3{margin-top:0}
+    .option-btn{display:inline-block;padding:10px 14px;border-radius:10px;margin-right:8px;cursor:pointer;border:1px solid #eee}
+    .hidden{display:none}
+    .qr-wrap{display:flex;gap:20px;align-items:center}
+    .qr{width:180px;height:180px;background:#fff;padding:8px;border-radius:10px}
+    .note{font-size:13px;color:#444}
+    /* responsive */
+    @media (max-width:700px){.hero{flex-direction:column}.row{flex-direction:column}}
   </style>
 </head>
 <body>
+  <div class="page">
+    <div class="hero">
+      <svg class="bunting" viewBox="0 0 200 80" width="320" height="160" aria-hidden>
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#ff6b6b"/><stop offset="1" stop-color="#ffd93d"/></linearGradient>
+        </defs>
+        <g>
+          <path d="M0 20 C40 0 160 0 200 20 L200 0 L0 0 Z" fill="#ffd3b6" opacity="0.7"/>
+          <g transform="translate(12,8)">
+            <polygon points="0,0 18,0 9,16" fill="#ff6b6b"/>
+            <polygon points="26,0 44,0 35,16" fill="#ffd93d"/>
+            <polygon points="52,0 70,0 61,16" fill="#6be5d6"/>
+            <polygon points="78,0 96,0 87,16" fill="#7a9bff"/>
+            <polygon points="104,0 122,0 113,16" fill="#b28eff"/>
+          </g>
+        </g>
+      </svg>
 
-  <div class="container">
-    <h2>Form Pendaftaran</h2>
+      <div class="hero-left">
+        <h1 class="title">Formulir Pendaftaran</h1>
+        <div class="subtitle">CARNIVAL BIG SALE SURYATOKOKU VOL.1 — Akhir Tahun 2025</div>
+        <p class="muted">Daftar sekarang untuk kesempatan hadir & mengikuti promo eksklusif.</p>
+      </div>
 
-    <form id="myForm" onsubmit="submitData(); return false;">
+      <div class="card">
+        <form id="mainForm">
+          <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <strong style="font-size:14px">Isi data pendaftaran (wajib)</strong>
+            <small class="muted">Semua field wajib diisi</small>
+          </div>
 
-      <label>Nama</label>
-      <input type="text" id="nama" required />
+          <label>Nama Lengkap
+            <input type="text" id="nama" name="nama" required />
+          </label>
 
-      <label>Jenis Kelamin</label>
-      <select id="jk" required>
-        <option value="">Pilih</option>
-        <option>Laki-laki</option>
-        <option>Perempuan</option>
-      </select>
+          <div class="row">
+            <div class="col">
+              <label>Gender
+                <select id="gender" name="gender" required>
+                  <option value="">Pilih...</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </label>
+            </div>
+            <div class="col">
+              <label>Tanggal Lahir
+                <input type="date" id="tgllahir" name="tgllahir" required />
+              </label>
+            </div>
+          </div>
 
-      <label>No HP</label>
-      <input type="text" id="hp" required />
+          <label>Nomor Whatsapp
+            <input type="tel" id="whatsapp" name="whatsapp" pattern="\+?[0-9\s\-]{6,20}" placeholder="Contoh: +6281234567890" required />
+          </label>
 
-      <label>Alamat</label>
-      <textarea id="alamat" rows="3" required></textarea>
+          <label>Alamat email
+            <input type="email" id="email" name="email" required />
+          </label>
 
-      <button type="submit">Kirim & Buat QR</button>
-    </form>
+          <label>Alamat Lengkap
+            <textarea id="alamat" name="alamat" rows="3" required></textarea>
+          </label>
 
-    <div id="result">
-      <h3>QR Anda</h3>
-      <div id="qrcode"></div>
-      <p>Data berhasil dikirim & tersimpan di Google Sheets.</p>
+          <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px">
+            <button type="button" id="submitBtn">Kirim Pendaftaran</button>
+          </div>
+        </form>
+
+        <div id="result" class="hidden" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- Modal: choice to join community -->
+    <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true">
+      <div class="modal">
+        <h3>Apakah kamu ingin bergabung ke komunitas @Suryafluencers (TIDAK WAJIB)</h3>
+        <p style="white-space:pre-line">SELAMAT DATANG CREATOR @Suryafluencers 🤳🏻
+@Suryafluencers adalah program Creator & Reviewer Suryatokoku yang ditujukan bagi Content Creator yang ingin berkolaborasi dengan melalui pembuatan konten, event/campaign dan review produk dengan kesempatan mendapatkan produk gratis.\n\nSebagai bagian dari komunitas ini, Creator berkesempatan untuk:
+- Akses Early Information terkait event/campaign yang diadakan di Suryatokoku
+- Mendapatkan Extra Point Member Suryatokoku
+- Special Goodie Bag
+- Sampel produk gratis untuk di review
+- Membangun Personal Branding sebagai KOL di Suryatokoku
+@Suryafluencers bukan hanya tentang review, tetapi tentang kolaborasi jangka panjang, pertumbuhan Creator, dan menciptakan konten yang berdampak.</p>
+
+        <div style="margin-top:12px">
+          <button id="joinYes" class="option-btn">Ya, ikut</button>
+          <button id="joinNo" class="option-btn">Tidak tertarik</button>
+          <button id="modalClose" class="option-btn" style="float:right">Batal</button>
+        </div>
+
+        <div id="joinForm" class="hidden" style="margin-top:12px">
+          <hr />
+          <label>Username Instagram
+            <input type="text" id="ig" name="ig" placeholder="(opsional)" />
+          </label>
+          <label>Username Tiktok
+            <input type="text" id="tiktok" name="tiktok" placeholder="(opsional)" />
+          </label>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button id="btnRegisterJoin">Daftar</button>
+          </div>
+        </div>
+
+        <div id="noJoinArea" class="hidden" style="margin-top:12px;display:flex;justify-content:flex-end">
+          <button id="btnRegisterNoJoin">Daftar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR + confirmation -->
+    <div id="afterArea" class="hidden" style="margin-top:18px;background:rgba(255,255,255,0.9);padding:16px;border-radius:12px">
+      <h3 style="margin:0 0 8px 0">Pendaftaran Sukses</h3>
+      <div class="qr-wrap">
+        <div>
+          <div class="note">Tunjukkan QR ini saat verifikasi / masuk acara. QR berisi: Nama | Nomor Whatsapp</div>
+          <div id="qrcode" class="qr" aria-hidden></div>
+        </div>
+        <div>
+          <p id="confirmText" class="note"></p>
+          <p class="muted">Kami telah mengirim data pendaftaran ke Google Sheet.</p>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- QR library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzaqH2LkENM0KfJqVxaYpl7XY8fXMS7qbSmi_twzjlcg40d1kLRIKazHCQdPWEp1OgWMw/exec";
+    // --- CONFIG: ganti WEBHOOK_URL dengan URL Web App Google Apps Script Anda ---
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzaqH2LkENM0KfJqVxaYpl7XY8fXMS7qbSmi_twzjlcg40d1kLRIKazHCQdPWEp1OgWMw/exec"; // contoh: https://script.google.com/macros/s/XXXXXXXX/exec
 
-    function submitData() {
-      let nama = document.getElementById("nama").value;
-      let jk = document.getElementById("jk").value;
-      let hp = document.getElementById("hp").value;
-      let alamat = document.getElementById("alamat").value;
+    const submitBtn = document.getElementById('submitBtn');
+    const modal = document.getElementById('modal');
+    const joinYes = document.getElementById('joinYes');
+    const joinNo = document.getElementById('joinNo');
+    const modalClose = document.getElementById('modalClose');
+    const joinForm = document.getElementById('joinForm');
+    const noJoinArea = document.getElementById('noJoinArea');
+    const btnRegisterJoin = document.getElementById('btnRegisterJoin');
+    const btnRegisterNoJoin = document.getElementById('btnRegisterNoJoin');
+    const afterArea = document.getElementById('afterArea');
+    const qrcodeContainer = document.getElementById('qrcode');
+    const confirmText = document.getElementById('confirmText');
 
-      fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ nama, jk, hp, alamat })
-      });
+    let currentFormData = null;
 
-      generateQR(nama, jk, hp, alamat);
+    submitBtn.addEventListener('click', ()=>{
+      const form = document.getElementById('mainForm');
+      if(!form.reportValidity()) return;
+      // collect base data
+      currentFormData = collectBaseForm();
+      // show modal
+      modal.style.display='flex';
+      joinForm.classList.add('hidden');
+      noJoinArea.classList.add('hidden');
+    });
+
+    modalClose.addEventListener('click', ()=>{ modal.style.display='none'; });
+
+    joinYes.addEventListener('click', ()=>{
+      joinForm.classList.remove('hidden');
+      noJoinArea.classList.add('hidden');
+    });
+    joinNo.addEventListener('click', ()=>{
+      noJoinArea.classList.remove('hidden');
+      joinForm.classList.add('hidden');
+    });
+
+    btnRegisterJoin.addEventListener('click', async ()=>{
+      // attach optional social fields
+      const ig = document.getElementById('ig').value.trim();
+      const tiktok = document.getElementById('tiktok').value.trim();
+      currentFormData.ig = ig;
+      currentFormData.tiktok = tiktok;
+      currentFormData.joinSuryafluencers = 'Ya';
+      await sendAndShowResult(currentFormData);
+      modal.style.display='none';
+    });
+
+    btnRegisterNoJoin.addEventListener('click', async ()=>{
+      currentFormData.joinSuryafluencers = 'Tidak';
+      currentFormData.ig = '';
+      currentFormData.tiktok = '';
+      await sendAndShowResult(currentFormData);
+      modal.style.display='none';
+    });
+
+    function collectBaseForm(){
+      return {
+        nama: document.getElementById('nama').value.trim(),
+        gender: document.getElementById('gender').value,
+        tgllahir: document.getElementById('tgllahir').value,
+        whatsapp: document.getElementById('whatsapp').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        alamat: document.getElementById('alamat').value.trim(),
+      };
     }
 
-    function generateQR(nama, jk, hp, alamat) {
-      let qrData = `Nama: ${nama}\nJK: ${jk}\nHP: ${hp}\nAlamat: ${alamat}`;
+    async function sendAndShowResult(data){
+      // show QR and confirmation
+      generateQR(data.nama + ' | ' + data.whatsapp);
+      confirmText.textContent = `Nama: ${data.nama}\nWA: ${data.whatsapp}`;
+      afterArea.classList.remove('hidden');
 
-      document.getElementById("qrcode").innerHTML = "";
-      new QRCode(document.getElementById("qrcode"), {
-        text: qrData,
-        width: 200,
-        height: 200
-      });
+      // try to send to Google Apps Script
+      if(WEBHOOK_URL && WEBHOOK_URL.indexOf('__PASTE')===-1){
+        try{
+          const resp = await fetch(WEBHOOK_URL,{
+            method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
+          });
+          const txt = await resp.text();
+          console.log('Sheet response:',txt);
+        }catch(err){
+          console.error('Gagal kirim ke Google Apps Script',err);
+          // optionally fallback to download CSV
+          downloadCSV([data]);
+        }
+      }else{
+        // No webhook configured; fallback to CSV download so user still has the data
+        downloadCSV([data]);
+      }
+    }
 
-      document.getElementById("result").style.display = "block";
+    function generateQR(text){
+      qrcodeContainer.innerHTML='';
+      new QRCode(qrcodeContainer, {text:text, width:180, height:180});
+    }
+
+    function downloadCSV(rows){
+      const keys = ['nama','gender','tgllahir','whatsapp','email','alamat','joinSuryafluencers','ig','tiktok'];
+      const csv = [keys.join(',')].concat(rows.map(r=>keys.map(k => '"' + ((r[k]||'').replace(/\"/g,'""')) + '"').join(','))).join('\n');
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'pendaftaran_carnival.csv'; document.body.appendChild(a); a.click(); a.remove();
     }
   </script>
 
+  <!--
+    --- GOOGLE APPS SCRIPT (Server) ---
+    Cara deploy:
+      1. Buka script.google.com -> New project
+      2. Ganti nama sheetId & sheetName sesuai Google Sheet Anda.
+      3. Paste kode di bawah, klik Save -> Deploy -> New deployment -> pilih "Web app".
+      4. Untuk "Execute as" pilih: Me. Untuk "Who has access" pilih: Anyone (even anonymous) atau sesuai kebutuhan.
+      5. Copy URL web app dan masukkan ke konstanta WEBHOOK_URL di atas.
+
+    Kode Google Apps Script (JavaScript):
+  -->
+  <script type="text/plain" id="gapps">
+/**
+ * Example Google Apps Script to receive JSON POST and append to Sheet starting at column B.
+ * Replace SHEET_ID and SHEET_NAME.
+ */
+function doPost(e){
+  try{
+    const SHEET_ID = '<<PASTE_YOUR_SHEET_ID_HERE>>';
+    const SHEET_NAME = 'Registration';
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sh = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
+
+    const data = JSON.parse(e.postData.contents);
+    // build row starting at column B (column index 2)
+    // Columns mapping (starting from B):
+    // B: nama, C: gender, D: tgllahir, E: whatsapp, F: email, G: alamat, H: joinSuryafluencers, I: ig, J: tiktok
+    const row = [
+      data.nama || '',
+      data.gender || '',
+      data.tgllahir || '',
+      data.whatsapp || '',
+      data.email || '',
+      data.alamat || '',
+      data.joinSuryafluencers || '',
+      data.ig || '',
+      data.tiktok || ''
+    ];
+
+    // find next empty row (we will append to the bottom)
+    const lastRow = Math.max(1, sh.getLastRow());
+    sh.getRange(lastRow + 1, 2, 1, row.length).setValues([row]);
+
+    return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+</script>
+
 </body>
 </html>
-
