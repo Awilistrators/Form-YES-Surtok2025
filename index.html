@@ -138,8 +138,8 @@
 @Suryafluencers bukan hanya tentang review, tetapi tentang kolaborasi jangka panjang, pertumbuhan Creator, dan menciptakan konten yang berdampak.</p>
 
         <div style="margin-top:12px">
-          <button id="joinYes" class="option-btn">Ya, ikut</button>
-          <button id="joinNo" class="option-btn">Tidak tertarik</button>
+          <button id="joinYes" type="button" class="option-btn">Ya, ikut</button>
+          <button id="joinNo" type="button" class="option-btn">Tidak tertarik</button>
           <button id="modalClose" class="option-btn" style="float:right">Batal</button>
         </div>
 
@@ -220,7 +220,7 @@
       if(!currentFormData) return;
       currentFormData.joinSuryafluencers = 'Ya';
       modal.style.display = 'none';
-      await sendAndShowResult(currentFormData);
+      sendAndShowResult(currentFormData);
     });
       noJoinArea.classList.add('hidden');
     });
@@ -228,7 +228,7 @@
       if(!currentFormData) return;
       currentFormData.joinSuryafluencers = 'Tidak';
       modal.style.display = 'none';
-      await sendAndShowResult(currentFormData);
+      sendAndShowResult(currentFormData);
     });
       joinForm.classList.add('hidden');
     });
@@ -240,7 +240,7 @@
       currentFormData.ig = ig;
       currentFormData.tiktok = tiktok;
       currentFormData.joinSuryafluencers = 'Ya';
-      await sendAndShowResult(currentFormData);
+      sendAndShowResult(currentFormData);
       modal.style.display='none';
     });
 
@@ -248,7 +248,7 @@
       currentFormData.joinSuryafluencers = 'Tidak';
       currentFormData.ig = '';
       currentFormData.tiktok = '';
-      await sendAndShowResult(currentFormData);
+      sendAndShowResult(currentFormData);
       modal.style.display='none';
     });
 
@@ -263,26 +263,16 @@
       };
     }
 
-    async function sendAndShowResult(data){
-      // Try to save to Google Sheets via Web App
-      if(WEBHOOK_URL && WEBHOOK_URL.indexOf('script.google.com')!==-1){
-        try{
-          const resp = await fetch(WEBHOOK_URL,{
-            method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
-          });
-          if(!resp.ok){
-            console.error('Response not OK',resp.status);
-            alert('Peringatan: Gagal menyimpan data ke Google Sheet. Silakan periksa konfigurasi Web App.');
-          }
-        }catch(err){
-          console.error('Gagal kirim ke Google Apps Script',err);
-          alert('Peringatan: Gagal menyimpan data ke Google Sheet. Silakan periksa koneksi / izin Web App.');
-        }
-      }else{
-        alert('Web App Google belum dikonfigurasi dengan benar. Data tidak tersimpan di Sheet.');
+    function sendAndShowResult(data){
+      // Kirim data ke Google Sheet (tidak blocking UI)
+      if(WEBHOOK_URL && WEBHOOK_URL.includes('script.google.com')){
+        fetch(WEBHOOK_URL,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(data)
+        }).catch(err=>console.error(err));
       }
 
-      // Build QR text and navigate to a clean "Pendaftaran Berhasil" page showing only the QR
       const qrText = (data.nama || '') + ' | ' + (data.whatsapp || '');
       showSuccessPage(qrText);
     }
