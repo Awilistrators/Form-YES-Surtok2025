@@ -129,49 +129,38 @@ button:hover { background: #d81b60; }
 })();
 
 /* ---------- submit with fetch, then redirect ---------- */
-(function(){
-  const form = document.getElementById('regForm');
-  const loading = document.getElementById('loading');
+<script>
+const form = document.getElementById('regForm');
+const loading = document.getElementById('loading');
 
-  // <-- PASTE /exec URL web app yang terbaru DI SINI -->
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxUnci9nIb10KevnCiS4BE5ZKyrn8ufIcOky_C7XDSkfyg02GH5JOZLfsnR440xcreciQ/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxqxS4JYOzVVj4XCgKWtO4nbaoAbJJm97wCcmqgylFElxeu3I3Dlvc2I1JC6CLnXr21/exec";
+const SUCCESS_URL = "https://awilistrators.github.io/Form-YES-Surtok2025/success.html";
 
-  // success page
-  const SUCCESS_URL = "https://awilistrators.github.io/Form-YES-Surtok2025/success.html";
+form.addEventListener("submit", function(e) {
+  e.preventDefault(); // ⛔ STOP submit bawaan browser
+  loading.style.display = "flex";
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    loading.style.display = 'flex';
-
-    // optional front validation for WA
-    const wa = form.elements['wa'].value || '';
-    if (!/^08[0-9]{8,11}$/.test(wa)) {
-      alert('Nomor WhatsApp tidak valid (mulai 08...).');
-      loading.style.display = 'none';
-      return;
+  fetch(WEBAPP_URL, {
+    method: "POST",
+    body: new FormData(form)
+  })
+  .then(res => res.text())
+  .then(text => {
+    if (text.trim() === "OK") {
+      window.location.href = SUCCESS_URL;
+    } else {
+      alert("Gagal submit: " + text);
+      loading.style.display = "none";
     }
-
-    fetch(WEBAPP_URL, {
-      method: 'POST',
-      body: new FormData(form),
-      mode: 'cors'
-    })
-    .then(r => r.text())
-    .then(text => {
-      if (text && text.trim().toUpperCase() === 'OK') {
-        window.location.href = SUCCESS_URL;
-      } else {
-        throw new Error(text || 'Response not OK');
-      }
-    })
-    .catch(err => {
-      console.error('Submit error:', err);
-      alert('Gagal mengirim data. Coba lagi.');
-      loading.style.display = 'none';
-    });
+  })
+  .catch(err => {
+    alert("Error koneksi");
+    console.error(err);
+    loading.style.display = "none";
   });
-})();
+});
 </script>
 
 </body>
 </html>
+
