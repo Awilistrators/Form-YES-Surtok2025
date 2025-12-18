@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-* { box-sizing: border-box; }
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #ff9acb, #ffc1dd);
@@ -14,51 +13,94 @@ body {
 }
 .box {
   max-width: 650px;
-  background: #ffffff;
+  background: #fff;
   margin: auto;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 12px 30px rgba(0,0,0,.18);
 }
 .header {
-  text-align: center;
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
   background: #ffe3f0;
+}
+.header .logo {
+  width: 70px;
+  margin-right: 16px;
 }
 .header .banner {
   width: 100%;
-  max-width: 520px;
-  height: auto;
-  display: inline-block;
+  max-height: 90px;
+  object-fit: contain;
 }
 .content { padding: 22px; }
-h2 { text-align: center; color: #e91e63; margin-bottom: 22px; }
-label { font-weight: bold; margin-top: 14px; display: block; }
-input, select, textarea { width: 100%; padding: 11px; margin-top: 6px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; }
-textarea { resize: vertical; }
-.desc { font-size: 13px; background: #fff0f7; padding: 14px; border-radius: 8px; margin-top: 10px; line-height: 1.6; }
-button { width: 100%; background: #e91e63; color: #fff; border: none; padding: 15px; margin-top: 26px; font-size: 16px; border-radius: 10px; cursor: pointer; }
-button:hover { background: #d81b60; }
+h2 {
+  text-align: center;
+  color: #e91e63;
+  margin-bottom: 22px;
+}
+label {
+  font-weight: bold;
+  margin-top: 14px;
+  display: block;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 11px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.desc {
+  font-size: 13px;
+  background: #fff0f7;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+button {
+  width: 100%;
+  background: #e91e63;
+  color: #fff;
+  border: none;
+  padding: 15px;
+  margin-top: 26px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
 .hidden { display: none; }
-.loading { position: fixed; inset: 0; background: rgba(255,255,255,.85); display: none; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #e91e63; z-index: 999; }
-@media (max-width:480px){ body{padding:12px} .box{max-width:100%} }
+.loading {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #e91e63;
+  z-index: 999;
+}
 </style>
 </head>
+
 <body>
 
 <div class="loading" id="loading">⏳ Mengirim data...</div>
 
 <div class="box">
   <div class="header">
-    <!-- header-event centered and larger -->
-    <img src="header-event.png" class="banner" alt="Header Event">
+    <img src="logo-suryatokoku.png" class="logo">
+    <img src="header-event.png" class="banner">
   </div>
 
   <div class="content">
-    <h2>FORMULIR PENDAFTARAN</h2>
+    <h2>Isi Formulir Pendaftaran</h2>
 
-    <!-- IMPORTANT: NO action/method on form -->
-    <form id="regForm" autocomplete="on" novalidate>
+    <form id="regForm">
+
       <label>Nama Lengkap</label>
       <input type="text" name="nama" required>
 
@@ -73,7 +115,7 @@ button:hover { background: #d81b60; }
       <input type="date" name="tgl_lahir" required>
 
       <label>Nomor WhatsApp</label>
-      <input type="tel" name="wa" required pattern="^08[0-9]{8,11}$" placeholder="08xxxxxxxxxx">
+      <input type="tel" name="wa" required>
 
       <label>Email</label>
       <input type="email" name="email" required>
@@ -81,12 +123,7 @@ button:hover { background: #d81b60; }
       <label>Alamat Lengkap</label>
       <textarea name="alamat" required></textarea>
 
-      <label>Apakah kamu ingin bergabung ke komunitas @Suryafluencers?</label>
-
-      <div class="desc">
-        <b>@Suryafluencers</b> adalah program Creator & Reviewer Suryatokoku...
-      </div>
-
+      <label>Bergabung ke @Suryafluencers?</label>
       <select name="suryaflu" id="suryaflu" required>
         <option value="">-- Pilih --</option>
         <option value="Ya">Ya, Mau Bergabung</option>
@@ -96,6 +133,7 @@ button:hover { background: #d81b60; }
       <div id="creatorForm" class="hidden">
         <label>Username Instagram</label>
         <input type="text" name="ig" id="ig">
+
         <label>Username TikTok</label>
         <input type="text" name="tt" id="tt">
       </div>
@@ -106,62 +144,42 @@ button:hover { background: #d81b60; }
 </div>
 
 <script>
-/* ---------- show/hide creator fields ---------- */
-(function(){
-  const suryaflu = document.getElementById('suryaflu');
-  const creatorForm = document.getElementById('creatorForm');
-  const ig = document.getElementById('ig');
-  const tt = document.getElementById('tt');
+const form = document.getElementById("regForm");
+const loading = document.getElementById("loading");
 
-  suryaflu.addEventListener('change', function () {
-    if (this.value === 'Ya') {
-      creatorForm.classList.remove('hidden');
-      ig.required = true;
-      tt.required = true;
-    } else {
-      creatorForm.classList.add('hidden');
-      ig.required = false;
-      tt.required = false;
-      ig.value = '';
-      tt.value = '';
-    }
-  });
-})();
-
-/* ---------- submit with fetch, then redirect ---------- */
-<script>
-const form = document.getElementById('regForm');
-const loading = document.getElementById('loading');
-
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyW2n3JH8aweJFsIDm7mj5nAR5VfGxC6Wa8ilgqFXbJaQDQt5e2AQiMbV58xp34QTAo2w/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbznMdEy1G-1ZrN8U5gXDG4kg0NbFycZ1-sAYvWqb_5oLw4nolnvrYk-14HBQouEGkbuYA/exec";
 const SUCCESS_URL = "https://awilistrators.github.io/Form-YES-Surtok2025/success.html";
 
 form.addEventListener("submit", function(e) {
-  e.preventDefault(); // ⛔ STOP submit bawaan browser
+  e.preventDefault();
   loading.style.display = "flex";
 
   fetch(WEBAPP_URL, {
     method: "POST",
     body: new FormData(form)
   })
-  .then(res => res.text())
-  .then(text => {
-    if (text.trim() === "OK") {
+  .then(r => r.text())
+  .then(t => {
+    if (t.trim() === "OK") {
       window.location.href = SUCCESS_URL;
     } else {
-      alert("Gagal submit: " + text);
-      loading.style.display = "none";
+      throw t;
     }
   })
   .catch(err => {
-    alert("Error koneksi");
-    console.error(err);
+    alert("Gagal mengirim data");
     loading.style.display = "none";
+    console.error(err);
   });
+});
+
+const suryaflu = document.getElementById("suryaflu");
+const creatorForm = document.getElementById("creatorForm");
+
+suryaflu.addEventListener("change", () => {
+  creatorForm.classList.toggle("hidden", suryaflu.value !== "Ya");
 });
 </script>
 
 </body>
 </html>
-
-
