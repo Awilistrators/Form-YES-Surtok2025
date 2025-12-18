@@ -19,7 +19,7 @@ body {
 }
 .box {
   background: #fff;
-  padding: 30px;
+  padding: 32px 26px;
   border-radius: 16px;
   max-width: 420px;
   width: 100%;
@@ -28,13 +28,23 @@ body {
 }
 h2 {
   color: #e91e63;
+  margin-bottom: 10px;
+}
+.desc {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 18px;
 }
 .qr {
-  margin: 20px auto;
+  margin: 22px auto;
 }
-.info {
-  font-size: 14px;
+.note {
+  font-size: 13px;
+  margin-top: 18px;
+}
+.ig {
   margin-top: 10px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -42,12 +52,24 @@ h2 {
 <body>
 
 <div class="box">
-  <h2>Pendaftaran Berhasil 🎉</h2>
-  <p>Silakan simpan QR Code ini</p>
+  <h2>✅ Pendaftaran Berhasil</h2>
+
+  <div class="desc">
+    Terima kasih telah melakukan pendaftaran.<br><br>
+    Silakan <b>screenshot QR Code</b> di bawah ini dan tunjukkan kepada
+    <b>staff Suryatokoku</b> untuk mendapatkan
+    <b>Freebies Skincare (Produk Skincare Gratis)</b>.
+    <br><br>
+    🎁 Freebies hanya berlaku untuk <b>100 orang pertama setiap hari</b><br>
+    📅 <b>29 – 31 Desember 2025</b>
+  </div>
 
   <div id="qrcode" class="qr"></div>
 
-  <div class="info" id="info"></div>
+  <div class="note">
+    Ikuti info terbaru kami di Instagram
+    <div class="ig">@suryatokoku.id</div>
+  </div>
 </div>
 
 <script>
@@ -55,14 +77,10 @@ const params = new URLSearchParams(window.location.search);
 const nama = params.get("nama") || "";
 const wa = params.get("wa") || "";
 
-// FORMAT QR: Nama<TAB>WA
+// FORMAT QR: Nama<TAB>WhatsApp
 const qrText = nama + "\t" + wa;
 
-// Tampilkan info
-document.getElementById("info").innerHTML =
-  "<b>Nama:</b> " + nama + "<br><b>WhatsApp:</b> " + wa;
-
-// Generate QR
+// Generate QR Code
 new QRCode(document.getElementById("qrcode"), {
   text: qrText,
   width: 220,
