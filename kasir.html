@@ -57,13 +57,49 @@ button {
 .popup-box button {
   width: 48%;
 }
+
+  .status {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.status.ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.info {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.no {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status.warn {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.big-btn {
+  font-size: 18px;
+  padding: 16px;
+  margin-top: 14px;
+  border-radius: 10px;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h2>📷 Scan QR Code Customer</h2>
+  <h2>📷 Scan QR Customer</h2>
 
   <div id="reader"></div>
 
@@ -113,11 +149,63 @@ function prosesScan(nama, wa) {
     .then(res => {
       lastData = res;
 
-      document.getElementById("result").innerHTML = `
-        <b>Nama:</b> ${res.nama}<br>
-        <b>Kunjungan ke:</b> ${res.totalKunjungan}<br>
-        <b>Status:</b> ${res.status}
-      `;
+      let statusText = "";
+let statusIcon = "";
+
+if (res.status === "BOLEH_DAPAT") {
+  statusText = "Dapat Freebies";
+  statusIcon = "🎁";
+} 
+else if (res.status === "SUDAH_PERNAH") {
+  statusText = "Sudah Pernah Dapat Freebies";
+  statusIcon = "ℹ️";
+} 
+else if (res.status === "KUOTA_HABIS") {
+  statusText = "Kuota Freebies Habis";
+  statusIcon = "⛔";
+} 
+else {
+  statusText = "Tidak Dapat Freebies";
+  statusIcon = "❌";
+}
+
+let statusText = "";
+let statusClass = "";
+let soundId = "";
+
+if (res.status === "BOLEH_DAPAT") {
+  statusText = "🎁 DAPAT FREEBIES";
+  statusClass = "ok";
+  soundId = "sound-ok";
+} 
+else if (res.status === "SUDAH_PERNAH") {
+  statusText = "ℹ️ SUDAH PERNAH DAPAT FREEBIES";
+  statusClass = "info";
+  soundId = "sound-info";
+} 
+else if (res.status === "KUOTA_HABIS") {
+  statusText = "⛔ KUOTA FREEBIES HABIS";
+  statusClass = "warn";
+  soundId = "sound-no";
+} 
+else {
+  statusText = "❌ TIDAK DAPAT FREEBIES";
+  statusClass = "no";
+  soundId = "sound-no";
+}
+
+document.getElementById("result").innerHTML = `
+  <div><b>Nama:</b> ${res.nama}</div>
+  <div><b>Kunjungan ke:</b> ${res.totalKunjungan}</div>
+  <div class="status ${statusClass}">
+    Status Freebies: ${statusText}
+  </div>
+
+  <button class="big-btn" onclick="scanUlang()">🔄 Scan Ulang</button>
+`;
+
+document.getElementById(soundId)?.play();
+
 
       if (res.popup === "KONFIRMASI") {
         document.getElementById("popupText").innerText =
@@ -148,10 +236,20 @@ function tutupPopup() {
   document.getElementById("popup").style.display = "none";
   location.reload();
 }
+
+function scanUlang() {
+  location.reload();
+}
+
 </script>
+
+<audio id="sound-ok" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="sound-info" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+<audio id="sound-no" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
 
 </body>
 </html>
+
 
 
 
