@@ -82,21 +82,25 @@ button {
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzP6-GLYBEnT_zRTNOC_0VmWP9KdoSY-OsGPvr32J7zZtBsgiKwTox2ns4ljuby0voxoQ/exec";
 
 let lastData = {};
+let sudahScan = false;
 
 const qr = new Html5Qrcode("reader");
 qr.start(
   { facingMode: "environment" },
   { fps: 10, qrbox: 220 },
   text => {
-    qr.stop();
+  if (sudahScan) return; // ⛔ hentikan scan kedua
+  sudahScan = true;
 
-    // QR teks: Nama<TAB>WA
-    const parts = text.trim().split(/\s+/);
-    const wa = parts.pop();
-    const nama = parts.join(" ");
+  qr.stop();
 
-    prosesScan(nama, wa);
-  }
+  const parts = text.trim().split(/\s+/);
+  const wa = parts.pop();
+  const nama = parts.join(" ");
+
+  prosesScan(nama, wa);
+}
+
 );
 
 function prosesScan(nama, wa) {
@@ -148,4 +152,5 @@ function tutupPopup() {
 
 </body>
 </html>
+
 
