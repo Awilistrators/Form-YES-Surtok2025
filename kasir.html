@@ -149,26 +149,6 @@ function prosesScan(nama, wa) {
     .then(res => {
       lastData = res;
 
-      let statusText = "";
-let statusIcon = "";
-
-if (res.status === "BOLEH_DAPAT") {
-  statusText = "Dapat Freebies";
-  statusIcon = "🎁";
-} 
-else if (res.status === "SUDAH_PERNAH") {
-  statusText = "Sudah Pernah Dapat Freebies";
-  statusIcon = "ℹ️";
-} 
-else if (res.status === "KUOTA_HABIS") {
-  statusText = "Kuota Freebies Habis";
-  statusIcon = "⛔";
-} 
-else {
-  statusText = "Tidak Dapat Freebies";
-  statusIcon = "❌";
-}
-
 let statusText = "";
 let statusClass = "";
 let soundId = "";
@@ -249,6 +229,7 @@ function scanUlang() {
 
 </body>
 </html>
+
 
 
 
