@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kasir Scan QR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  padding: 16px;
+}
+.box {
+  max-width: 420px;
+  margin: auto;
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+h2 {
+  text-align: center;
+  margin-top: 0;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  background: #e91e63;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-top: 12px;
+}
+#result {
+  margin-top: 16px;
+  font-size: 14px;
+}
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.popup-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 320px;
+  text-align: center;
+}
+.popup-box button {
+  width: 48%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Kasir Scan QR</h2>
+
+  <div id="reader"></div>
+
+  <div id="result"></div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <p id="popupText"></p>
+    <button onclick="beriFreebies()">YA</button>
+    <button onclick="tutupPopup()">TIDAK</button>
+  </div>
+</div>
+
+<script>
+const WEBAPP_URL = "PASTE_URL_APPS_SCRIPT_KAMU_DI_SINI";
+
+let lastData = {};
+
+const qr = new Html5Qrcode("reader");
+qr.start(
+  { facingMode: "environment" },
+  { fps: 10, qrbox: 220 },
+  text => {
+    qr.stop();
+
+    // QR teks: Nama<TAB>WA
+    const parts = text.trim().split(/\s+/);
+    const wa = parts.pop();
+    const nama = parts.join(" ");
+
+    prosesScan(nama, wa);
+  }
+);
+
+function prosesScan(nama, wa) {
+  const fd = new FormData();
+  fd.append("nama", nama);
+  fd.append("wa", wa);
+
+  fetch(WEBAPP_URL, { method: "POST", body: fd })
+    .then(r => r.json())
+    .then(res => {
+      lastData = res;
+
+      document.getElementById("result").innerHTML = `
+        <b>Nama:</b> ${res.nama}<br>
+        <b>Kunjungan ke:</b> ${res.totalKunjungan}<br>
+        <b>Status:</b> ${res.status}
+      `;
+
+      if (res.popup === "KONFIRMASI") {
+        document.getElementById("popupText").innerText =
+          "Customer ini memenuhi syarat mendapatkan freebies?";
+        document.getElementById("popup").style.display = "flex";
+      } else if (res.popup === "INFO") {
+        alert("Customer ini sudah pernah mendapatkan freebies");
+      }
+    });
+}
+
+function beriFreebies() {
+  const fd = new FormData();
+  fd.append("nama", lastData.nama);
+  fd.append("wa", lastData.wa);
+
+  fetch(WEBAPP_URL + "?action=beriFreebies", {
+    method: "POST",
+    body: fd
+  })
+  .then(() => {
+    alert("Freebies berhasil dicatat");
+    tutupPopup();
+  });
+}
+
+function tutupPopup() {
+  document.getElementById("popup").style.display = "none";
+  location.reload();
+}
+</script>
+
+</body>
+</html>
